@@ -1,6 +1,6 @@
 import './App.css';
 import React, { Component } from 'react'
-import MinesWeeper from './components/minesweeper';
+import MinesWeeper from './components/minesweeper/Index';
 
 export default class App extends Component {
   render() {
@@ -11,5 +11,3 @@ export default class App extends Component {
     )
   }
 }
-
-export default App;

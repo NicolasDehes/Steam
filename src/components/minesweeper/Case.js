@@ -5,7 +5,7 @@ export default class Case extends Component {
     super(props)
   
     this.state = {
-      show: false,
+      isShow: false,
       value: this.props.value,
       isBomb: this.props.isBomb
     }
