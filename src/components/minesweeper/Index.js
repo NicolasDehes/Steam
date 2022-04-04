@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import Board from './Board';
+import React, { Component } from 'react';
+import './style.css';
 
 export default class MinesWeeper extends Component {
   
@@ -9,7 +9,7 @@ export default class MinesWeeper extends Component {
     this.state = {
       longueur: 16,
       largeur: 16,
-      nbMines: 40,
+      nbMines: 30,
       gameBoard: [],
     }
   }
@@ -20,7 +20,7 @@ export default class MinesWeeper extends Component {
     for(let i = 0; i < this.state.longueur; i++){
       let row = []
       for(let j = 0; j<this.state.largeur;j++){
-        row.push({isBomb: false, value: 0});
+        row.push({isBomb: false, value: 0, isShow: false,x: i,y: j});
       }
       tempBoard.push(row)
     }
@@ -35,17 +35,16 @@ export default class MinesWeeper extends Component {
     }
     //Positionnement des mines
     positionMine.forEach(pos => {
-      tempBoard[pos.x][pos.y] = {isBomb: true}  
+      tempBoard[pos.x][pos.y].isBomb = true;
+      for(let i = pos.x -1 ; i < pos.x +2 ; i++){
+        for(let j = pos.y -1 ; j < pos.y +2 ; j++){
+          if(tempBoard[i]!= undefined && tempBoard[i][j] != undefined){
+            tempBoard[i][j].value++;
+          }
+        }
+      }
     });
     //Creation des valeurs des cases
-    for(let i = 0; i < this.state.longueur; i++){
-      let row = []
-      for(let j = 0; j<this.state.largeur;j++){
-        row.push({isBomb: false, value: 0});
-      }
-      tempBoard.push(row)
-    }
-
     this.setState({
       gameBoard: tempBoard
     });
@@ -58,12 +57,30 @@ export default class MinesWeeper extends Component {
     };
   }
 
-  clickCase = () => {
+  howManyBombArround = (x,y) => {
 
   }
 
-  gameOver = () => {
+  clickCase = (x,y) => {
+    let tempBoard = this.state.gameBoard;
+    tempBoard[x][y].isShow = true;
+    if(tempBoard[x][y].value === 0){
+      for(let i = x -1 ; i < x +2 ; i++){
+        for(let j = y -1 ; j < y +2 ; j++){
+          if(tempBoard[i]!= undefined && tempBoard[i][j] != undefined && !tempBoard[i][j].isShow){
+            this.clickCase(i,j);
+          }
+        }
+      }
+    }
+    this.setState({gameBoard: tempBoard})
+    if(tempBoard[x][y].isBomb){
+      this.gameOver();
+    }
+  }
 
+  gameOver = () => {
+    console.log("AHAH Loser")
   }
   
 
@@ -73,6 +90,7 @@ export default class MinesWeeper extends Component {
   }
 
   render() {
+    let key = 1;
     return (
       <div className="minesweeper">
         <div className="mine-params">
@@ -87,7 +105,27 @@ export default class MinesWeeper extends Component {
           </div>
           <button onClick={this.initGame}>Start</button>
         </div>
-        <Board clickCase={this.clickCase} gameOver={this.gameOver} playerBoard={this.state.playerBoard}/>
+        <div className="mine-board">
+        {this.state.gameBoard !== undefined ? 
+          this.state.gameBoard.map(row => {
+            return(
+              <div className="mine-row" key={key++}>
+                {row.map(c => {
+                  if(c.isShow){
+                    return (
+                      <div className="mine-case-show" key={key++}>{c.isBomb?"X":c.value}</div>
+                    )
+                  }else{
+                    return (
+                      <div className="mine-case-hide" key={key++} onClick={() => this.clickCase(c.x,c.y)}></div>
+                    )
+                  }
+                })}
+              </div>
+            )
+          })
+        :""}
+        </div>
       </div>
     )
   }
