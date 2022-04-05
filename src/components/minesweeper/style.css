@@ -1,17 +1,71 @@
+.minesweeper{
+  
+}
 .mine-case-show{
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   text-align: center;
-  margin: 2px;
+  font-size: 100%;
+  cursor: pointer;
+  border: 2px solid #FFF;
 }
 .mine-case-hide{
   border-radius: 2px 2px;
-  width: 20px;
-  height: 20px;
-  margin: 2px;
+  width: 30px;
+  height: 30px;
   background-color: #777;
+  cursor: pointer;
+  border: 2px solid #FFF;
+}
+.mine-case-show-bomb{
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size: 100%;
+  cursor: pointer;
+  background-color: #F00;
+  border: 2px solid #FFF;
+}
+.mine-board{
+  margin: auto;
 }
 
 .mine-row{
   display: flex;
+}
+
+.gameIcon{
+  width: 80%;
+  height: 80%;
+  margin: 10%;
+}
+
+.case-1{
+  background-color: rgba(174, 243, 142, 0.7)
+}
+.case-2{
+  background-color: rgba(245, 224, 132, 0.7)
+}
+.case-3{
+  background-color: rgba(255, 156, 139, 0.7)
+}
+.case-4{
+  background-color: rgba(250, 86, 86, 0.7)
+}
+.case-5{
+  background-color: rgba(255, 0, 0, 0.7)
+}
+.case-6{
+  background-color: rgba(255, 145, 240, 0.7)
+}
+.case-7{
+  background-color: rgba(160, 6, 180, 0.7)
+}
+.case-8{
+  color: white;
+  background-color: black
+}
+.info-icon{
+  width: 40px;
+  height: 40px;
 }
