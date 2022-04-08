@@ -1,8 +1,16 @@
 .minesweeper{
-  
+  background-color: rgb(128, 87, 1);
+  height: 100%;
+  width: 100%;
+}
+.title{
+  padding-top: 1em;
+  text-align: center;
+  color: #FFF;
 }
 .mine-case-show{
-  width: 30px;
+  flex: 1;
+  width: 34px;
   height: 30px;
   text-align: center;
   font-size: 100%;
@@ -10,8 +18,9 @@
   border: 2px solid #FFF;
 }
 .mine-case-hide{
-  border-radius: 2px 2px;
-  width: 30px;
+  flex: 1;
+  border-radius: 2px 2px 2px 2px;
+  width: 34px;
   height: 30px;
   background-color: #777;
   cursor: pointer;
@@ -68,4 +77,39 @@
 .info-icon{
   width: 40px;
   height: 40px;
+}
+.allLevel{
+  display: flex;
+}
+.level{
+  width: 100px;
+  height: 100px;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  text-align: center;
+  cursor: pointer;
+}
+.level-title{
+  margin-top: 20px;
+}
+.custom-setting{
+
+}
+.displayNone{
+  display: none;
+}
+.info-game{
+  display: flex;
+  width: 100%;
+}
+.info-game div{
+  flex: 1;
+}
+.victory{
+  color: white;
+  font-size: xxx-large;
+  text-align: center;
 }

@@ -11,11 +11,14 @@ export default class MineSweeper extends Component {
       start: false,
       gameOver: false,
       victory: false,
-      longueur: 16,
-      largeur: 16,
-      nbMines: 40,
+      longueur: 0,
+      largeur: 0,
+      nbMines: 0,
       nbFlags: 0,
       gameBoard: [],
+      openSetting: false,
+      openLevel: true,
+      openInfoGame: false,
     }
   }
 
@@ -47,7 +50,7 @@ export default class MineSweeper extends Component {
       tempBoard[pos.x][pos.y].isBomb = true;
       for (let i = pos.x - 1; i < pos.x + 2; i++) {
         for (let j = pos.y - 1; j < pos.y + 2; j++) {
-          if (tempBoard[i] != undefined && tempBoard[i][j] != undefined) {
+          if (tempBoard[i] !== undefined && tempBoard[i][j] !== undefined) {
             tempBoard[i][j].value++;
           }
         }
@@ -115,12 +118,12 @@ export default class MineSweeper extends Component {
     if(this.state.start){
       if (!this.state.gameOver && !this.state.victory) {
         let tempBoard = this.state.gameBoard;
-        if (!tempBoard[x][y].isShow) {
+        if (!tempBoard[x][y].isShow && !tempBoard[x][y].isFlag) {
           tempBoard[x][y].isShow = true;
           if (tempBoard[x][y].value === 0) {
             for (let i = x - 1; i < x + 2; i++) {
               for (let j = y - 1; j < y + 2; j++) {
-                if (tempBoard[i] != undefined && tempBoard[i][j] != undefined && !tempBoard[i][j].isShow) {
+                if (tempBoard[i] != undefined && tempBoard[i][j] !== undefined && !tempBoard[i][j].isShow) {
                   this.clickCase(i, j);
                 }
               }
@@ -131,22 +134,21 @@ export default class MineSweeper extends Component {
             tempBoard[x][y].explose = true;
             this.gameOver();
           } else {
-            let board = this.state.gameBoard;
             let nbCase = 0;
-            board.map(row => {
+            tempBoard.map(row => {
               row.map(c => {
                 if(!c.isShow) nbCase++;
               })
             })
-            if(nbCase == this.state.nbMines){
+            if(nbCase === this.state.nbMines){
               this.setState({victory: true})
             }
           }
-        } else {
+        } else if(!tempBoard[x][y].isFlag){
           let numFlagArround = 0;
           for (let i = x - 1; i < x + 2; i++) {
             for (let j = y - 1; j < y + 2; j++) {
-              if (tempBoard[i] != undefined && tempBoard[i][j] != undefined && tempBoard[i][j].isFlag) {
+              if (tempBoard[i] !== undefined && tempBoard[i][j] !== undefined && tempBoard[i][j].isFlag) {
                 numFlagArround++;
               }
             }
@@ -154,7 +156,7 @@ export default class MineSweeper extends Component {
           if (numFlagArround == tempBoard[x][y].value) {
             for (let i = x - 1; i < x + 2; i++) {
               for (let j = y - 1; j < y + 2; j++) {
-                if (tempBoard[i] != undefined && tempBoard[i][j] != undefined && !tempBoard[i][j].isShow && !tempBoard[i][j].isFlag) {
+                if (tempBoard[i] != undefined && tempBoard[i][j] !== undefined && !tempBoard[i][j].isShow && !tempBoard[i][j].isFlag) {
                   this.clickCase(i, j);
                 }
               }
@@ -218,6 +220,53 @@ export default class MineSweeper extends Component {
         break;
     }
   }
+  launchLevel = (type) => event => {
+    this.setState({openLevel: false})
+    switch(type){
+      case"easy":
+        this.setState({
+          longueur: 8,
+          largeur: 8,
+          nbMines: 10,
+          openInfoGame: true
+        })
+        break;
+      case"normal":
+        this.setState({
+          longueur: 16,
+          largeur: 16,
+          nbMines: 40,
+          openInfoGame: true
+        })
+        break;
+      case"hard":
+        this.setState({
+          longueur: 30,
+          largeur: 16,
+          nbMines: 99,
+          openInfoGame: true
+        })
+        break;
+      case"custom":
+        this.setState({
+          openSetting: true,
+          openInfoGame: true
+        })
+        break;
+    }
+  }
+  changeLevel = () => {
+    this.setState({
+      openInfoGame: false,
+      openLevel: true,
+      openSetting: false,
+      longueur: 0,
+      largeur: 0,
+      gameBoard: [],
+      victory: false,
+      gameOver: false
+    })
+  }
 
   render() {
     const width = (this.state.longueur*30)+"px";
@@ -227,23 +276,27 @@ export default class MineSweeper extends Component {
     return (
       <div className="minesweeper">
         <header>
+          <h1 className="title">MINESWEEPER</h1>
           <div className="mine-params">
-            <div className="level">
-              <h3>EASY</h3>
-              <p>8x8 - 10 mines</p>
+            <div className={this.state.openLevel ? "allLevel" : "displayNone"}>
+              <div className="level" onClick={this.launchLevel("easy")}>
+                <span className="level-title">EASY</span>
+                <p>8x8 - 10 mines</p>
+              </div>
+              <div className="level" onClick={this.launchLevel("normal")}>
+                <span className="level-title">MEDIUM</span>
+                <p>16x16 - 40 mines</p>
+              </div>
+              <div className="level" onClick={this.launchLevel("hard")}>
+                <span className="level-title">HARD</span>
+                <p>30x16 - 99 mines</p>
+              </div>
+              <div className="level" onClick={this.launchLevel("custom")}>
+                <span className="level-title">CUSTOM</span>
+                <p>???</p>
+              </div>
             </div>
-            <div className="level">
-              <h3>MEDIUM</h3>
-              <p>16x16 - 40 mines</p>
-            </div>
-            <div className="level">
-              <h3>HARD</h3>
-              <p>30x16 - 99 mines</p>
-            </div>
-            <div className="level">
-              <h3>CUSTOM</h3>
-            </div>
-            <div className="custom-settong">
+            <div className={ this.state.openSetting ? "custom-setting" : "displayNone"}>
               <label>
                 Longueur du plateau : <input type="text" value={this.state.longueur} onChange={this.onChangeInput('longueur')}/>
               </label>
@@ -255,24 +308,30 @@ export default class MineSweeper extends Component {
               </label>
             </div>
           </div>
-          <div className="info-game">
-            <button onClick={this.initGame}>Start</button>
+          <div className={this.state.openInfoGame ? "info-game" : "displayNone"}>
             <div>
               <img className="info-icon" src="flag.png"/>
               {this.state.nbFlags} / {this.state.nbMines}
             </div>
             <div>
+              <button onClick={this.initGame}>Start</button>
+            </div>
+            <div>
               <img className="info-icon" src="chrono.png"/>
               {Math.floor(this.state.timer/60)} : {("0" + this.state.timer%60).slice(-2)}
             </div>
-            {this.state.victory?
-              <div>
-                VICTOIRE !
-              </div>
-            : ""}
+            <div>
+              <button onClick={this.changeLevel}>Changer la difficulté</button>
+            </div>
           </div>
         </header>
-        
+        <div className="victory">
+              {this.state.victory?
+                "VICTOIRE !"
+              : this.state.gameOver ?
+                "PERDU !"
+              : ""}
+            </div>
         <div className="mine-board" style={{width: width, height: heigth}}>
           {this.state.gameBoard !== undefined ?
             this.state.gameBoard.map(row => {
