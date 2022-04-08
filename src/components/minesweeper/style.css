@@ -1,0 +1,134 @@
+.minesweeper{
+  background-color: rgb(128, 87, 1);
+  height: 100%;
+  width: 100%;
+}
+.title{
+  padding-top: 1em;
+  text-align: center;
+  color: #FFF;
+}
+.mine-case{
+  flex: 1
+}
+.mine-case-show{
+  flex: 1;
+  height: 30px;
+  text-align: center;
+  font-size: 100%;
+  cursor: pointer;
+  border: 2px solid #FFF;
+}
+.mine-case-hide{
+  flex: 1;
+  border-radius: 2px 2px 2px 2px;
+  height: 30px;
+  background-color: #777;
+  cursor: pointer;
+  border: 2px solid #FFF;
+}
+.mine-case-show-bomb{
+  height: 30px;
+  text-align: center;
+  font-size: 100%;
+  cursor: pointer;
+  background-color: #F00;
+  border: 2px solid #FFF;
+}
+.mine-board{
+  margin: auto;
+  display: block;
+}
+
+.mine-row{
+  display: flex;
+}
+
+.gameIcon{
+  width: 80%;
+  height: 80%;
+  margin: 10%;
+}
+
+.case-1{
+  background-color: rgba(174, 243, 142, 0.7)
+}
+.case-2{
+  background-color: rgba(245, 224, 132, 0.7)
+}
+.case-3{
+  background-color: rgba(255, 156, 139, 0.7)
+}
+.case-4{
+  background-color: rgba(250, 86, 86, 0.7)
+}
+.case-5{
+  background-color: rgba(255, 0, 0, 0.7)
+}
+.case-6{
+  background-color: rgba(255, 145, 240, 0.7)
+}
+.case-7{
+  background-color: rgba(160, 6, 180, 0.7)
+}
+.case-8{
+  color: white;
+  background-color: black
+}
+.info-icon{
+  width: 40px;
+  height: 40px;
+}
+.allLevel{
+  display: flex;
+}
+.level{
+  background-color: white;
+  width: 100px;
+  height: 100px;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  text-align: center;
+  cursor: pointer;
+  padding-top: 20px;
+}
+.level-title{
+  display: block;
+  margin-bottom: 20px;
+}
+.custom-setting{
+  display: block;
+  margin: 2em;
+}
+.custom-setting label{
+  display: flex;
+}
+.custom-setting input{
+  width: 50px;
+}
+
+.displayNone{
+  display: none;
+}
+.info-game{
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  width: 100%;
+}
+.info-game div{
+  text-align: center;
+  flex: 1;
+}
+.victory{
+  color: white;
+  font-size: xxx-large;
+  text-align: center;
+}
+.button{
+  font-size: 1em;
+  padding: 0.5em;
+}
