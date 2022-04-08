@@ -5,7 +5,7 @@ export default class Clicker extends Component {
   render() {
     return (
         <div>
-            <p>Salut</p>
+            <p>Salut les gens</p>
         </div>
     )
   }
