@@ -1,5 +1,8 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 import './style.css';
+import { Modal } from '@react-ui-org/react-ui';
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default class MineSweeper extends Component {
 
@@ -19,6 +22,10 @@ export default class MineSweeper extends Component {
       openSetting: false,
       openLevel: true,
       openInfoGame: false,
+      showLeaderBoard: false,
+      leaderBoardLevel: 0,
+      leaderBoardValue: [],
+      leaderBoardLoading: false
     }
   }
 
@@ -40,7 +47,7 @@ export default class MineSweeper extends Component {
     let positionMine = [];
     for (let m = 0; m < nbMine; m++) {
       let pos = this.randomisePosition(this.state.largeur, this.state.longueur, x, y) // eslint-disable-next-line
-      while (positionMine.find(p => p.x === pos.x && p.y === pos.y) !== undefined) { 
+      while (positionMine.find(p => p.x === pos.x && p.y === pos.y) !== undefined) {
         pos = this.randomisePosition(this.state.largeur, this.state.longueur, x, y)
       }
       positionMine.push(pos);
@@ -143,7 +150,7 @@ export default class MineSweeper extends Component {
               })
             })
             if (nbCase === this.state.nbMines) {
-              this.setState({ victory: true })
+              this.victory();
             }
           }
         } else if (!tempBoard[x][y].isFlag) {
@@ -168,6 +175,13 @@ export default class MineSweeper extends Component {
       }
     } else {
       this.initBoard(x, y);
+    }
+  }
+
+  victory = () => {
+    this.setState({ victory: true })
+    if (this.props.user != undefined) {
+      this.saveTime();
     }
   }
 
@@ -280,6 +294,45 @@ export default class MineSweeper extends Component {
     })
   }
 
+  saveTime = () => {
+    const requestInfo = {};
+    requestInfo['user'] = this.props.user;
+    requestInfo['game'] = {
+      name: "MineSweeper",
+      time: this.state.timer
+    }
+    axios.post(process.env.URL_BACK + "/minesweeper", requestInfo)
+      .then(response => {
+        if (response.status == 200) {
+
+        }
+      })
+      .catch(error => {
+        console.error("Error 'saveTime' in Mineswepper : ", error)
+      })
+  }
+  showLeaderBoard = (open) => {
+    if (open != false) {
+      this.setState({ showLeaderBoard: true },
+        axios.get(process.env.URL_BACK + '/minesweeper/leaderboard', { level: this.state.leaderBoardLevel })
+          .then(response => {
+
+          })
+          .catch(error => {
+            console.error("Error 'showLeaderBoard' in MineSweeper : ", error)
+          })
+      )
+    } else {
+      this.setState({ showLeaderBoard: false })
+    }
+  }
+
+  changeLeaderBoard = (event) => {
+    this.setState({ leaderBoardLevel: event.target.value }, () => {
+      this.showLeaderBoard();
+    })
+  }
+
   render() {
     const width = (this.state.longueur * 34) + "px";
     const heigth = ((this.state.largeur * 34) + 34) + "px";
@@ -287,8 +340,46 @@ export default class MineSweeper extends Component {
 
     return (
       <div className="minesweeper">
+        {this.state.showLeaderBoard ?
+          <Modal
+            actions={[
+              {
+                color: 'danger',
+                label: 'Delete',
+                onClick: () => this.showLeaderBoard(false),
+              },
+            ]}
+            onClose={() => this.showLeaderBoard(false)}
+            title="LeaderBoard"
+          >
+            <select onChange={this.changeLeaderBoard}>
+              <option value="easy" key="0">Easy</option>
+              <option value="normal" key="1">Normal</option>
+              <option value="hard" key="2">Hard</option>
+            </select>
+            {this.state.leaderBoardLoading == true ?
+              <table>
+              {this.state.leaderBoardValue.forEach(row => {
+                return (
+                  <tr>
+                    <td>{row.ranking}</td>
+                    <td>{row.User.nickName}</td>
+                    <td>{row.timer}</td>
+                  </tr>
+                );
+              })}
+              </table>
+            :
+              <ClipLoader color={color} loading={loading} css={override} size={150} />
+            }
+          </Modal>
+          : ''}
         <header>
-          <h1 className="title">MINESWEEPER</h1>
+          <div className="titleBox">
+            <h1 className="title">MINESWEEPER</h1>
+            <img className="leaderboard" src="leaderboard.png" title="Classement" onClick={this.showLeaderBoard} />
+
+          </div>
           <div className="mine-params">
             <div className={this.state.openLevel ? "allLevel" : "displayNone"}>
               <div className="level" onClick={this.launchLevel("easy")}>

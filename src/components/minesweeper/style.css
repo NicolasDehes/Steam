@@ -4,7 +4,6 @@
   width: 100%;
 }
 .title{
-  padding-top: 1em;
   text-align: center;
   color: #FFF;
 }
@@ -131,4 +130,19 @@
 .button{
   font-size: 1em;
   padding: 0.5em;
+}
+.leaderboard{
+  margin-left: 1em;
+  width: 30px;
+  height: 30px;
+  background-color: #EEE;
+  padding: 5px;
+  border-radius: 5px;
+}
+.titleBox{
+  margin: auto;
+  display: flex;
+  padding-top: 2.5em;
+  text-align: center;
+  justify-content: center;
 }
