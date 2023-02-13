@@ -40,7 +40,7 @@ export default class MineSweeper extends Component {
     let positionMine = [];
     for (let m = 0; m < nbMine; m++) {
       let pos = this.randomisePosition(this.state.largeur, this.state.longueur, x, y) // eslint-disable-next-line
-      while (positionMine.find(p => p.x === pos.x && p.y === pos.y) !== undefined) { 
+      while (positionMine.find(p => p.x === pos.x && p.y === pos.y) !== undefined) {
         pos = this.randomisePosition(this.state.largeur, this.state.longueur, x, y)
       }
       positionMine.push(pos);
@@ -280,6 +280,72 @@ export default class MineSweeper extends Component {
     })
   }
 
+  logic = (originX, originY) => {
+    for (let x = originX - 1; x < originX + 2; x++) {
+      if (x > 0 && x < this.state.gameBoard.length) {
+        // COLONE
+        for (let y = originY - 1; y < originY + 2; y++) {
+          if (y > 0 && y < this.state.gameBoard[x].length) {
+            // Sur une case autour de celle recherchée
+            const c = this.state.gameBoard[x][y];
+            if (c.isShow && c.value > 0) {
+              let count = 0;
+              // On compte le nombre de case grise autour d'elle
+              // LIGNE
+              for (let xx = x - 1; xx < x + 2; xx++) {
+                if (xx >= 0 && xx < this.state.gameBoard.length) {
+                  // COLONE
+                  for (let yy = y - 1; yy < y + 2; yy++) {
+                    if (yy >= 0 && yy < this.state.gameBoard[xx].length) {
+                      // Sur une case autour de celle recherchée
+                      const cc = this.state.gameBoard[xx][yy];
+                      if (!cc.isShow || cc.isFlag) {
+                        count++;
+                      }
+                    }
+                  }
+                }
+              }
+              // Si le nombre de case grise est bien le nombre indiqué sur la case
+              if (count === c.value) {
+                return "!"
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  autoPlay = () => async(event) => {
+    event.preventDefault();
+    console.log("Youhou !")
+    while(!this.state.victory){
+      this.state.gameBoard.forEach(row => {
+        row.forEach(c => {
+          if(c.isFlag != true){
+            if(this.logic(c.x,c.y)==="!"){
+              this.flagCase(c.x,c.y)(event);
+            }
+          }
+        })
+      });
+      await this.sleep(10);
+      this.state.gameBoard.forEach(row => {
+        row.forEach(c => {
+          if(c.isShow){
+            this.clickCase(c.x,c.y)
+          }
+        })
+      });
+      await this.sleep(10);
+    }
+  }
+  sleep = (ms) =>  {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   render() {
     const width = (this.state.longueur * 34) + "px";
     const heigth = ((this.state.largeur * 34) + 34) + "px";
@@ -336,6 +402,9 @@ export default class MineSweeper extends Component {
             <div>
               <button className="button" onClick={this.changeLevel}>Changer la difficulté</button>
             </div>
+            <div>
+              <button className='button' onClick={this.autoPlay()}>AutoPlay</button>
+            </div>
           </div>
         </header>
         <div className="victory">
@@ -348,9 +417,11 @@ export default class MineSweeper extends Component {
         <div className="mine-board" style={{ width: width, height: heigth }}>
           {this.state.gameBoard !== undefined ?
             this.state.gameBoard.map(row => {
+
               return (
                 <div className="mine-row" key={key++}>
                   {row.map(c => {
+                    // c.logic = this.logic(c.x,c.y);
                     return (
                       <div className="mine-case" style={{ width: this.state.longueur / width, height: this.state.largeur / heigth }}>
                         {(c.explose !== undefined && c.explose) ?
@@ -366,7 +437,7 @@ export default class MineSweeper extends Component {
                                   : (c.isFlag) ?
                                     <div className="mine-case-hide" key={key++} onContextMenu={this.flagCase(c.x, c.y)} onClick={() => this.clickCase(c.x, c.y)}><img className="gameIcon" src="flag.png" alt="flag" /></div>
                                     :
-                                    <div className="mine-case-hide" key={key++} onContextMenu={this.flagCase(c.x, c.y)} onClick={() => this.clickCase(c.x, c.y)}></div>
+                                    <div className="mine-case-hide" key={key++} onContextMenu={this.flagCase(c.x, c.y)} onClick={() => this.clickCase(c.x, c.y)}>{c.logic}</div>
                         }
                       </div>
                     )
